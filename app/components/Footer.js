@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Container,
@@ -53,10 +54,25 @@ const SocialButton = ({ children, label, href }) => {
 };
 
 export default function Footer() {
-  const shouldDisplayImage = window.innerWidth <= 768;
+  const [shouldDisplayImage, setShouldDisplayImage] = useState(false);
+
+  useEffect(() => {
+    setShouldDisplayImage(window.innerWidth <= 768);
+
+    const handleResize = () => {
+      setShouldDisplayImage(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   return (
     <Box color="white" position="relative" bg="url(https://zetapp.in/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FAboutUs.085fb7a2.png&w=3840&q=100)">
-            {shouldDisplayImage && (
+      {shouldDisplayImage && (
         <Box
           position="absolute"
           top={0}

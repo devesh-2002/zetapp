@@ -1,5 +1,5 @@
 "use client"
-import React,{useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Flex,
@@ -25,21 +25,25 @@ import {
 } from '@chakra-ui/icons';
 
 const Navbar = () => {
-  const { isOpen, onToggle } = useDisclosure();
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [windowWidth, setWindowWidth] = useState(0);
+  const { isOpen, onToggle } = useDisclosure(); 
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
 
-  const navbarBgColor = windowWidth <= 768 ? 'black' : 'white';
-  const textColor = windowWidth <= 768 ? 'black' : 'gray.800';
+    handleResize(); // Set initial windowWidth value
 
-  const handleResize = () => {
-    setWindowWidth(window.innerWidth);
-  };
-
-  useState(() => {
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
+  const shouldDisplayImage = windowWidth <= 768;
+  const navbarBgColor = useColorModeValue('white', 'gray.800');
+  const textColor = useColorModeValue('gray.800', 'white');
   return (
     <Box>
       <Flex
@@ -113,14 +117,15 @@ const Navbar = () => {
     </Box>
   );
 };
+
 const DesktopNav = () => {
   const popoverContentBgColor = useColorModeValue('white', 'gray.800');
 
   return (
-    <Stack direction={'row'} spacing={6} >
+    <Stack direction={'row'} spacing={6}>
       {NAV_ITEMS.map((navItem) => (
-        <Box key={navItem.label} >
-          <Popover trigger={'hover'} placement={'bottom-start'} >
+        <Box key={navItem.label}>
+          <Popover trigger={'hover'} placement={'bottom-start'}>
             <PopoverTrigger>
               <Link
                 p={2}
@@ -132,7 +137,6 @@ const DesktopNav = () => {
                 _hover={{
                   textDecoration: 'none',
                 }}
-                
               >
                 {navItem.label}
               </Link>
