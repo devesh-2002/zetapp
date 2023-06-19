@@ -14,33 +14,37 @@ import {
 function StatsCard(props) {
   const { title, stat, image, color } = props;
 
-  const grayscale = useColorModeValue('grayscale(100%)', 'grayscale(100%)'); // Initialize grayscale filter
-const isMobile = useBreakpointValue({ base: true, md: false }); 
-  const [scrollY, setScrollY] = useState(window.innerHeight);
-  // Check if mobile breakpoint
+  const grayscale = useColorModeValue('grayscale(100%)', 'grayscale(100%)');
+  const isMobile = useBreakpointValue({ base: true, md: false });
+
+  const [scrollY, setScrollY] = useState(0);
 
   const handleScroll = () => {
     setScrollY(window.scrollY);
   };
 
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
+    if (typeof window !== 'undefined') {
+      window.addEventListener('scroll', handleScroll);
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+      };
+    }
   }, []);
 
   useEffect(() => {
-    setTimeout(() => {
-      window.scrollTo({ top: 10, behavior: 'smooth' });
-    }, 100); // Adjust the delay as needed
-
-    return () => {
-      window.scrollTo({ top: 0 });
-    };
+    if (typeof window !== 'undefined') {
+      setTimeout(() => {
+        window.scrollTo({ top: 10, behavior: 'smooth' });
+      }, 100);
+      
+      return () => {
+        window.scrollTo({ top: 0 });
+      };
+    }
   }, []);
 
-  const cardFontSize = isMobile ? 'xs' : 'xl'; // Adjust font size based on breakpoint
+  const cardFontSize = isMobile ? 'xs' : 'xl';
 
   return (
     <Stat
@@ -56,13 +60,13 @@ const isMobile = useBreakpointValue({ base: true, md: false });
         bg: 'white',
         transform: 'scale(1.05) translateZ(0)',
         transition: 'opacity 1s, transform 2s',
-        filter: 'grayscale(0%)'
+        filter: 'grayscale(0%)',
       }}
       className="hover-card"
     >
       <img
         src={image}
-        style={{ filter: grayscale, transition: 'filter 0.3s' }} // Apply the grayscale filter with transition
+        style={{ filter: grayscale, transition: 'filter 0.3s' }}
         width={'25%'}
         height={'25%'}
         alt={title}
